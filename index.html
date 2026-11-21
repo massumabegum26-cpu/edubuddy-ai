@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduBuddy — AI Student Learning Assistant</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for quiz completion -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .perspective { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .card-flip { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .flipped { transform: rotateY(180deg); }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    .pulse-subtle { animation: pulse-subtle 3s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-sky-200">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-sky-700 to-indigo-700 bg-clip-text text-transparent">EduBuddy</span>
+          <span class="text-xs ml-1.5 px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 font-semibold border border-sky-200">PS04</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Mode indicator / settings button -->
+        <button id="btn-settings" class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 transition">
+          <i data-lucide="sliders" class="w-4 h-4 text-slate-500"></i>
+          <span>Mode: <strong id="current-mode-label" class="text-sky-600">Smart Demo</strong></span>
+        </button>
+
+        <a href="#quiz-section" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Quiz Mode</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+    
+    <!-- Hero & Search Input Section -->
+    <section class="text-center max-w-3xl mx-auto space-y-4 pt-2">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-semibold">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-500"></i>
+        <span>Adaptive Concept Simplifier & Active Recall Tutor</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Master Any Difficult Concept at <span class="bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">Your Exact Level</span>
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600">
+        Stop staring at dense textbook pages. EduBuddy translates complex academic jargon into intuitive analogies, multi-level explanations, and active recall diagnostics.
+      </p>
+
+      <!-- Search Input Container -->
+      <div class="bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200 space-y-3 mt-6">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="absolute left-4 w-5 h-5 text-slate-400"></i>
+          <input 
+            type="text" 
+            id="topic-input"
+            placeholder="Enter any academic topic (e.g. Quantum Superposition, Backpropagation, CRISPR, Inflation)..." 
+            value="Quantum Superposition"
+            class="w-full pl-12 pr-28 py-3.5 text-sm sm:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 text-slate-800 placeholder-slate-400 font-medium"
+          />
+          <button 
+            id="btn-explain"
+            class="absolute right-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-md shadow-sky-600/20 transition flex items-center gap-1.5">
+            <span>Explain</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Level Selector Tabs -->
+        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+            <i data-lucide="gauge" class="w-3.5 h-3.5"></i>
+            Understanding Level:
+          </span>
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl gap-1 text-xs font-semibold" id="level-tabs">
+            <button data-level="eli5" class="level-tab px-3 py-1.5 rounded-lg bg-white shadow-sm text-sky-700 font-bold transition">
+              👶 ELI5 (Analogy)
+            </button>
+            <button data-level="highschool" class="level-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              🎒 High School
+            </button>
+            <button data-level="college" class="level-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              🎓 College / Deep
+            </button>
+            <button data-level="cheatsheet" class="level-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              ⚡ Cheat Sheet
+            </button>
+          </div>
+        </div>
+
+        <!-- Instant Preset Chips for Hackathon Demo -->
+        <div class="flex items-center gap-1.5 flex-wrap pt-1 text-xs text-slate-500">
+          <span class="font-medium text-slate-400">Quick Demo Presets:</span>
+          <button class="preset-chip px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 rounded-md transition font-medium border border-slate-200" data-topic="Quantum Superposition">
+            ⚛️ Quantum Superposition
+          </button>
+          <button class="preset-chip px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 rounded-md transition font-medium border border-slate-200" data-topic="Backpropagation & Neural Networks">
+            🧠 Neural Backpropagation
+          </button>
+          <button class="preset-chip px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 rounded-md transition font-medium border border-slate-200" data-topic="CRISPR-Cas9 Gene Editing">
+            🧬 CRISPR-Cas9
+          </button>
+          <button class="preset-chip px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 rounded-md transition font-medium border border-slate-200" data-topic="Inflation & Interest Rates">
+            📈 Inflation & Interest Rates
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State Skeleton -->
+    <div id="loading-state" class="hidden max-w-4xl mx-auto py-12 text-center space-y-4">
+      <div class="inline-block p-4 bg-sky-50 rounded-2xl animate-spin text-sky-600">
+        <i data-lucide="loader-2" class="w-8 h-8"></i>
+      </div>
+      <p class="text-sm font-semibold text-slate-600">EduBuddy is adapting explanation to your level...</p>
+    </div>
+
+    <!-- Results Workspace Section -->
+    <div id="results-container" class="space-y-8 max-w-5xl mx-auto">
+      
+      <!-- Top Overview Card (TL;DR & Audio) -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-sky-100/50 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="res-level-tag" class="text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 tracking-wider">
+                ELI5 Level
+              </span>
+              <span class="text-xs text-slate-400 font-medium">• Tailored for Intuitive Understanding</span>
+            </div>
+            <h2 id="res-title" class="text-2xl font-bold text-slate-900 mt-1">Quantum Superposition</h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-listen" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition" title="Listen to explanation">
+              <i data-lucide="volume-2" class="w-4 h-4 text-sky-600"></i>
+              <span id="listen-text">Listen (TTS)</span>
+            </button>
+            <button id="btn-save" class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition">
+              <i data-lucide="bookmark" class="w-4 h-4"></i>
+              <span>Save</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TLDR Box -->
+        <div class="mt-4 p-4 rounded-xl bg-sky-50/70 border border-sky-100 flex items-start gap-3">
+          <i data-lucide="zap" class="w-5 h-5 text-sky-600 shrink-0 mt-0.5"></i>
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-900 block">The Core Idea (TL;DR)</span>
+            <p id="res-tldr" class="text-sm text-sky-950 mt-0.5 leading-relaxed font-medium">
+              While classical computers use bits that must be strictly 0 or 1, quantum computers use qubits that can explore both simultaneously until observed.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2 Column: Analogy vs Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          
+          <!-- Intuitive Real-World Analogy -->
+          <div class="bg-amber-50/50 rounded-2xl p-5 border border-amber-200/70 space-y-2.5">
+            <div class="flex items-center gap-2 text-amber-800">
+              <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600"></i>
+              <h3 class="font-bold text-sm uppercase tracking-wide">Intuitive Metaphor / Analogy</h3>
+            </div>
+            <p id="res-analogy" class="text-sm text-amber-950 leading-relaxed">
+              Think of a coin spinning on a table. While it's spinning in mid-air, it is neither purely Heads nor Tails—it holds the mathematical possibility of both. Classical bits are coins sitting flat on the table; qubits are coins spinning in motion.
+            </p>
+          </div>
+
+          <!-- Misconception Diagnostic -->
+          <div class="bg-rose-50/50 rounded-2xl p-5 border border-rose-200/70 space-y-2.5">
+            <div class="flex items-center gap-2 text-rose-800">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+              <h3 class="font-bold text-sm uppercase tracking-wide">Common Student Misconception</h3>
+            </div>
+            <p id="res-misconception" class="text-sm text-rose-950 leading-relaxed">
+              Students often think quantum computers just run regular games or spreadsheets 1,000x faster. In reality, they are completely different mathematical engines designed specifically for combinatorics like molecule simulations.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step by Step Concept Breakdown -->
+        <div class="mt-6 space-y-3">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            Key Concepts Breakdown
+          </h3>
+          <div id="res-breakdown-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Footer Meta (Application & Memory Hook) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-100">
+          <div class="flex items-start gap-3">
+            <div class="p-2 rounded-lg bg-emerald-100 text-emerald-800">
+              <i data-lucide="rocket" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-700 uppercase">Real-World Application</span>
+              <p id="res-application" class="text-xs text-slate-600 mt-0.5">
+                Simulating molecular folding to synthesize life-saving cancer drugs in hours instead of decades.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="p-2 rounded-lg bg-purple-100 text-purple-800">
+              <i data-lucide="brain" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-700 uppercase">Memory Anchor / Mnemonic</span>
+              <p id="res-memory" class="text-xs text-slate-600 mt-0.5">
+                "SPIN: Superposition Particles Intuitively Navigate complex states."
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive Assessment: Quiz & Active Recall Zone -->
+      <section id="quiz-section" class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <!-- Background Glow -->
+        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-indigo-800/80">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-800/70 border border-indigo-700 text-indigo-300 text-xs font-semibold">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>Active Recall & Diagnostic Assessment</span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold">Check Your Understanding</h3>
+            <p class="text-xs sm:text-sm text-indigo-200">
+              Test your intuition! If you pick a wrong option, EduBuddy analyzes the logical misconception.
+            </p>
+          </div>
+
+          <div class="bg-indigo-800/50 px-4 py-2.5 rounded-2xl border border-indigo-700/60 flex items-center gap-3">
+            <div class="text-right">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-300 block">Score</span>
+              <span id="quiz-score" class="text-lg font-extrabold text-white">0 / 2</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Questions List -->
+        <div id="quiz-container" class="space-y-6 mt-6">
+          <!-- Dynamically populated questions -->
+        </div>
+      </section>
+
+      <!-- Active Recall Flashcards Section -->
+      <section class="bg-white rounded-2xl p-6 border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="copy" class="w-5 h-5 text-sky-600"></i>
+              Spaced Repetition Flashcards
+            </h3>
+            <p class="text-xs text-slate-500">Click any card to flip and verify your recall.</p>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 rounded-lg text-slate-600">3 Cards Available</span>
+        </div>
+
+        <div id="flashcards-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Settings / API Configuration Modal -->
+  <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-200 space-y-5">
+      <div class="flex items-center justify-between">
+        <h4 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5 text-slate-600"></i>
+          EduBuddy Engine Settings
+        </h4>
+        <button id="btn-close-modal" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-slate-700">Execution Mode</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="mode-demo" class="p-3 text-left rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-900 font-medium text-xs">
+            <span class="font-bold block">✨ Smart Demo Mode</span>
+            Instant pre-loaded datasets (Fast & 100% reliable for judges).
+          </button>
+          <button id="mode-api" class="p-3 text-left rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 font-medium text-xs">
+            <span class="font-bold block">⚡ Live Gemini API</span>
+            Generate dynamic explanations for any arbitrary topic.
+          </button>
+        </div>
+
+        <div id="api-key-container" class="hidden space-y-2 pt-2">
+          <label class="block text-xs font-bold text-slate-700">Gemini API Key (Optional)</label>
+          <input 
+            type="password" 
+            id="gemini-key-input"
+            placeholder="AIzaSy..." 
+            class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
+          />
+          <p class="text-[11px] text-slate-500">Keys are stored only in your browser memory for demo purposes.</p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex justify-end">
+        <button id="btn-save-settings" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800 transition">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>Built for Hackathon • <strong>PS04: EduBuddy Student Learning Assistant</strong></span>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span>Active Recall Engine</span>
+        <span>•</span>
+        <span>Multi-Level Pedagogy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
