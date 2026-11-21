@@ -1,0 +1,1054 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduBuddy AI — Student Learning Assistant</title>
+  <style>
+    /* 100% Pure Embedded CSS - Zero CDN Dependencies */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #07090e;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      padding: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Cards & Glassmorphism */
+    .card {
+      background: #111726;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Navbar */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #d8b4fe;
+      margin-left: 6px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    /* Status Pills */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+    }
+
+    /* Hero Search */
+    .hero-box {
+      border-color: rgba(168, 85, 247, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .search-row {
+      display: flex;
+      gap: 8px;
+    }
+    .search-input {
+      flex: 1;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .search-input:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Preset Chips */
+    .chips-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: #a855f7;
+      color: #f3e8ff;
+    }
+
+    /* Level Selector Cards */
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .level-card {
+      background: #0d121f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .level-card:hover {
+      border-color: #a855f7;
+      transform: translateY(-2px);
+    }
+    .level-card.active {
+      background: rgba(88, 28, 135, 0.25);
+      border: 2px solid #a855f7;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+    .level-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .level-badge-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .tag-blue { background: rgba(14, 165, 233, 0.2); color: #7dd3fc; }
+    .tag-pink { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+    .level-title { font-size: 14px; font-weight: 700; color: #fff; }
+    .level-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .level-foot {
+      font-size: 11px;
+      font-weight: 600;
+      color: #c084fc;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Explanation & Chat */
+    .chat-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .ai-bubble {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .prose-text {
+      font-size: 13.5px;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+    .prose-text p + p {
+      margin-top: 8px;
+    }
+
+    /* Analogy Box */
+    .analogy-box {
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+    }
+    .analogy-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+    .analogy-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #d8b4fe;
+      margin-bottom: 4px;
+    }
+    .analogy-content {
+      font-size: 12.5px;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Takeaways Grid */
+    .takeaways-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .takeaway-item {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    /* Quiz Module */
+    .quiz-card {
+      border-color: rgba(16, 185, 129, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .quiz-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .quiz-question-box {
+      background: #0d121f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .question-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 600px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .quiz-btn {
+      background: #171e2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #e2e8f0;
+      font-size: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quiz-btn:hover:not(:disabled) {
+      background: #232d42;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .quiz-btn.correct {
+      background: rgba(6, 95, 70, 0.6);
+      border-color: #10b981;
+      color: #6ee7b7;
+      font-weight: 700;
+    }
+    .quiz-btn.wrong {
+      background: rgba(159, 18, 57, 0.6);
+      border-color: #f43f5e;
+      color: #fca5a5;
+    }
+    .quiz-feedback {
+      background: #111a2e;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.4;
+      display: none;
+    }
+
+    /* Flashcards */
+    .flashcards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .fc-box {
+      background: #0d121f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 18px;
+      min-height: 180px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .fc-box:hover {
+      border-color: #a855f7;
+      transform: translateY(-2px);
+    }
+    .fc-box.flipped {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.4), rgba(30, 27, 75, 0.4));
+      border-color: #a855f7;
+    }
+    .fc-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #c084fc;
+    }
+    .fc-content {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .fc-hint {
+      font-size: 11px;
+      color: #a855f7;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* Button Utilities */
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Header -->
+    <header class="card header">
+      <div class="brand">
+        <div class="brand-icon">✨</div>
+        <div>
+          <div style="display:flex; align-items:center;">
+            <span class="brand-title">EduBuddy AI</span>
+            <span class="brand-badge">PRO v2.5</span>
+          </div>
+          <p class="brand-sub">Intelligent Student Learning Assistant • PS04</p>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="status-badge">
+          <span class="pulse-dot"></span>
+          <span>Interactive Mode Active</span>
+        </span>
+        <button id="ttsButton" class="btn-secondary">🔊 Read Aloud</button>
+      </div>
+    </header>
+
+    <!-- Search Hero -->
+    <section class="card hero-box">
+      <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; text-transform:uppercase; color:#c084fc;">
+        <span>AI Knowledge Scaffolding</span>
+        <span style="color:#94a3b8;">Enter any topic or choose below</span>
+      </div>
+
+      <div class="search-row">
+        <input type="text" id="topicInput" class="search-input" value="Photosynthesis" placeholder="Enter academic topic (e.g. Photosynthesis, Quantum, Backpropagation)..." />
+        <button id="learnBtn" class="btn-primary">
+          <span>Explain Now</span>
+          <span>→</span>
+        </button>
+      </div>
+
+      <div class="chips-row">
+        <span style="color:#64748b; font-weight:600;">Presets:</span>
+        <button class="chip" data-top="photosynthesis">🌿 Photosynthesis</button>
+        <button class="chip" data-top="quantum superposition">⚛️ Quantum Superposition</button>
+        <button class="chip" data-top="neural backpropagation">🧠 Neural Backprop</button>
+        <button class="chip" data-top="supply and demand">📈 Supply &amp; Demand</button>
+      </div>
+    </section>
+
+    <!-- 3 Level Selector Cards -->
+    <section style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; font-weight:700; text-transform:uppercase; color:#94a3b8; letter-spacing:0.5px;">Choose Understanding Level:</span>
+        <span id="activeLevelLabel" style="font-size:12px; font-weight:700; color:#c084fc;">Current: Beginner</span>
+      </div>
+
+      <div class="levels-grid">
+        <div class="level-card active" data-level="Beginner">
+          <div class="level-top">
+            <span style="font-size:22px;">🌱</span>
+            <span class="level-badge-tag tag-green">Level 1</span>
+          </div>
+          <div class="level-title">Beginner (Intuition)</div>
+          <div class="level-desc">Everyday analogies, visual stories, zero intimidating jargon. Builds mental models.</div>
+          <div class="level-foot">
+            <span>● Selected Active</span>
+            <span>✓</span>
+          </div>
+        </div>
+
+        <div class="level-card" data-level="Intermediate">
+          <div class="level-top">
+            <span style="font-size:22px;">⚡</span>
+            <span class="level-badge-tag tag-blue">Level 2</span>
+          </div>
+          <div class="level-title">Intermediate (Mechanisms)</div>
+          <div class="level-desc">Connects cause &amp; effect, standard definitions, and process interactions.</div>
+          <div class="level-foot">
+            <span>Click to Select</span>
+            <span>○</span>
+          </div>
+        </div>
+
+        <div class="level-card" data-level="Advanced">
+          <div class="level-top">
+            <span style="font-size:22px;">🔬</span>
+            <span class="level-badge-tag tag-pink">Level 3</span>
+          </div>
+          <div class="level-title">Advanced (Deep Dive)</div>
+          <div class="level-desc">Rigorous formulations, mathematical limits, and system boundary cases.</div>
+          <div class="level-foot">
+            <span>Click to Select</span>
+            <span>○</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explanation Card -->
+    <section class="card chat-card">
+      <div class="chat-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:18px;">🤖</span>
+          <div>
+            <h3 id="lessonHeading" style="font-size:14px; font-weight:700; color:#fff;">Photosynthesis — Beginner Explanation</h3>
+            <span style="font-size:11px; color:#94a3b8;">Contextual pedagogical AI stream</span>
+          </div>
+        </div>
+        <button id="copyBtn" class="btn-secondary">📋 Copy</button>
+      </div>
+
+      <div class="ai-bubble">
+        <div id="explanationBody" class="prose-text"></div>
+
+        <div class="analogy-box">
+          <div class="analogy-icon">💡</div>
+          <div>
+            <div class="analogy-title">Everyday Intuitive Analogy</div>
+            <div id="analogyBody" class="analogy-content"></div>
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:#94a3b8; display:block; margin-bottom:8px;">Key Takeaways:</span>
+          <div id="takeawaysList" class="takeaways-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Recall Quiz -->
+    <section class="card quiz-card">
+      <div class="quiz-head">
+        <div>
+          <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#34d399;">Active Recall Assessment</span>
+          <h3 style="font-size:14px; font-weight:700; color:#fff; margin-top:2px;">Check Your Understanding</h3>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <span id="quizScoreText" style="padding:4px 10px; border-radius:8px; background:rgba(168,85,247,0.2); color:#d8b4fe; font-size:11px; font-weight:700;">Score: 0 / 2</span>
+        </div>
+      </div>
+
+      <div id="quizQuestionsContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </section>
+
+    <!-- Flashcards Grid -->
+    <section style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; font-weight:700; text-transform:uppercase; color:#94a3b8; letter-spacing:0.5px;">Active Recall Flashcards (Click to Flip):</span>
+        <span style="font-size:11px; color:#c084fc;">Click any card to reveal answer</span>
+      </div>
+
+      <div id="flashcardsGrid" class="flashcards-grid"></div>
+    </section>
+
+  </div>
+
+  <script>
+    // Bulletproof Offline Knowledge Base
+    const DB = {
+      "photosynthesis": {
+        topic: "Photosynthesis",
+        Beginner: {
+          explanation: [
+            "Photosynthesis is the magnificent process that green plants use to convert everyday sunlight, water, and carbon dioxide into food (glucose) and clean oxygen.",
+            "Water enters through root tips, leaf chlorophyll traps solar photons like a solar panel, and sugar is produced while releasing fresh oxygen for us to breathe!"
+          ],
+          analogy: "Think of a plant leaf like a miniature solar-powered kitchen: sunlight is the electricity powering the oven, water and CO2 are raw ingredients, and baked glucose feeds the plant while oxygen drifts out the kitchen chimney!",
+          takeaways: [
+            "Plants absorb water via roots and CO2 through microscopic leaf pores (stomata).",
+            "Chlorophyll pigment in chloroplasts absorbs solar photons.",
+            "Fresh Oxygen (O2) is produced as a vital byproduct."
+          ]
+        },
+        Intermediate: {
+          explanation: [
+            "Photosynthesis couples light-dependent reactions on thylakoid membranes (generating ATP & NADPH) with the Calvin Cycle in the stroma.",
+            "Photolysis splits H2O into oxygen, electrons, and protons. The Calvin Cycle fixes atmospheric CO2 into carbohydrates using RuBisCO."
+          ],
+          analogy: "Like a two-stage factory: Stage 1 charges chemical batteries (ATP/NADPH) using solar collectors. Stage 2 uses those batteries to assemble carbon dioxide molecules into sugar bricks.",
+          takeaways: [
+            "Net Formula: 6CO2 + 6H2O + Light → C6H12O6 + 6O2.",
+            "Photolysis splits water to generate electrons and release oxygen.",
+            "RuBisCO catalyzes carbon fixation in the Calvin cycle."
+          ]
+        },
+        Advanced: {
+          explanation: [
+            "Linear electron flow from Photosystem II (P680) to Photosystem I (P700) establishes a proton motive force across the thylakoid membrane driving CF0-CF1 ATP synthase via rotary chemiosmosis.",
+            "Ferredoxin-NADP+ reductase reduces NADP+ to NADPH, while cyclic photophosphorylation regulates stoichiometric ATP:NADPH ratios."
+          ],
+          analogy: "Like a precision hydroelectric dam: photon-driven pumps force protons into the thylakoid lumen, and the rushing pressure turns catalytic turbines (ATP synthase) to forge ATP.",
+          takeaways: [
+            "Photolysis at the oxygen-evolving complex: 2H2O → O2 + 4H+ + 4e-.",
+            "Cyclic photophosphorylation modulates the ATP:NADPH stoichiometric ratio.",
+            "Photorespiration occurs when RuBisCO oxygenates RuBP under heat."
+          ]
+        },
+        quiz: [
+          {
+            q: "What is the primary green pigment in plant leaves that absorbs solar photons?",
+            options: ["Hemoglobin", "Chlorophyll", "Carotene", "Melanin"],
+            correct: 1,
+            exp: "Chlorophyll absorbs blue and red wavelengths while reflecting green light, giving plants their green hue.",
+            misc: "Chlorophyll is in plant chloroplasts; hemoglobin is in animal blood."
+          },
+          {
+            q: "What gas do plants absorb from the atmosphere for photosynthesis?",
+            options: ["Nitrogen", "Carbon Dioxide", "Helium", "Methane"],
+            correct: 1,
+            exp: "Plants take in Carbon Dioxide (CO2) through microscopic pores called stomata on leaves.",
+            misc: "Plants take in CO2 and release O2; human respiration is the reverse."
+          }
+        ],
+        flashcards: [
+          { q: "What is the net chemical equation for Photosynthesis?", a: "6CO2 + 6H2O + Light Energy → C6H12O6 + 6O2" },
+          { q: "Where does the Calvin Cycle occur inside chloroplasts?", a: "In the Stroma fluid surrounding the thylakoid discs" },
+          { q: "What enzyme catalyzes carbon fixation in the Calvin cycle?", a: "RuBisCO (the most abundant enzyme on Earth)" }
+        ]
+      },
+
+      "quantum superposition": {
+        topic: "Quantum Superposition",
+        Beginner: {
+          explanation: [
+            "In regular computers, data is made of bits that must be strictly 0 or 1 (like a light switch that is either ON or OFF).",
+            "Quantum computers use qubits. Because of superposition, a qubit can explore both 0 and 1 simultaneously until measured!"
+          ],
+          analogy: "Imagine a coin spinning on a table. While spinning in mid-air, it is both Heads and Tails at the exact same time! Only when you slap your hand down does it collapse into a definite Heads or Tails.",
+          takeaways: [
+            "Classical bits are 0 OR 1; qubits can be BOTH simultaneously.",
+            "Measurement causes wave collapse into a single discrete classical state.",
+            "Enables quantum algorithms to explore exponential combinations at once."
+          ]
+        },
+        Intermediate: {
+          explanation: [
+            "A qubit state is represented by |ψ⟩ = α|0⟩ + β|1⟩, where α and β are complex probability amplitudes.",
+            "The Born Rule states that |α|² + |β|² = 1. Quantum gates (like Hadamard) rotate state vectors without collapsing them."
+          ],
+          analogy: "Like a musical chord: two notes played together on a piano create a single composite wave with blended attributes.",
+          takeaways: [
+            "Born Rule: Probability P(0) = |α|² and P(1) = |β|².",
+            "Unitary gates (Hadamard H) create equal superposition: (|0⟩ + |1⟩)/√2.",
+            "Decoherence occurs when environmental noise causes phase loss."
+          ]
+        },
+        Advanced: {
+          explanation: [
+            "A pure qubit corresponds to a normalized ray on the Bloch sphere: |ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩.",
+            "Unitary operations form the Lie group SU(2). Quantum entanglement extends this to tensor product spaces ℂ² ⊗ ℂ²."
+          ],
+          analogy: "A normalized 3D unit vector manipulated by unitary rotation matrices until projective Hermitian measurement collapses it.",
+          takeaways: [
+            "Bloch coordinates parametrized by polar angle θ and azimuthal phase φ.",
+            "No-Cloning Theorem: An unknown quantum state cannot be duplicated.",
+            "Constructive phase interference amplifies the correct computational output."
+          ]
+        },
+        quiz: [
+          {
+            q: "What happens mathematically when an observer measures a qubit in superposition?",
+            options: ["It duplicates into two computers", "Its wavefunction collapses into a discrete state (|0⟩ or |1⟩)", "It generates infinite electricity", "It turns into heat"],
+            correct: 1,
+            exp: "Upon measurement, decoherence collapses the probability distribution into a single definite eigenstate.",
+            misc: "Measurement doesn't create hardware; it extracts one classical scalar according to the Born rule."
+          }
+        ],
+        flashcards: [
+          { q: "What is the state vector equation for a single qubit?", a: "|ψ⟩ = α|0⟩ + β|1⟩ with |α|² + |β|² = 1" },
+          { q: "What transformation does the Hadamard (H) gate apply?", a: "Maps basis state |0⟩ into equal superposition: (|0⟩ + |1⟩)/√2" },
+          { q: "What is the No-Cloning Theorem?", a: "It is impossible to create an identical copy of an arbitrary unknown quantum state" }
+        ]
+      },
+
+      "neural backpropagation": {
+        topic: "Neural Backpropagation",
+        Beginner: {
+          explanation: [
+            "Backpropagation is how an artificial intelligence learns from its mistakes by nudging internal knobs backwards from the error it made.",
+            "The AI makes a prediction guess. If wrong, backprop calculates which internal knobs contributed to the mistake and tweaks them."
+          ],
+          analogy: "Imagine an archery student shooting an arrow 2 feet too high. The coach says: 'Lower your elbow by 2 inches'. That backward adjustment instruction is backpropagation!",
+          takeaways: [
+            "AI makes a forward prediction guess.",
+            "Calculates difference between guess and real answer.",
+            "Tweaks weights backwards to reduce future mistakes."
+          ]
+        },
+        Intermediate: {
+          explanation: [
+            "Backpropagation computes the gradient of the loss function with respect to every weight parameter using the Calculus Chain Rule.",
+            "Weights update via gradient descent: W := W - η · ∇L, where η is the learning rate."
+          ],
+          analogy: "Like walking down a foggy mountain slope in the direction of steepest downward descent (gradient descent).",
+          takeaways: [
+            "Chain Rule: ∂L/∂w = (∂L/∂y) * (∂y/∂z) * (∂z/∂w).",
+            "Weights update via gradient descent: W := W - η · ∇L.",
+            "Learning rate (η) dictates step magnitude."
+          ]
+        },
+        Advanced: {
+          explanation: [
+            "Reverse-mode automatic differentiation computing vectorized error terms δ_l = (W_{l+1}^T δ_{l+1}) ⊙ σ'(z_l) on a directed acyclic computation graph.",
+            "Jacobian caching ensures O(edges) linear runtime efficiency."
+          ],
+          analogy: "Dynamic programming on an execution graph that reuses intermediate Jacobian products.",
+          takeaways: [
+            "Vectorized error term: δ_l = (W_{l+1}^T δ_{l+1}) ⊙ σ'(z_l).",
+            "ReLU activations eliminate vanishing gradients in deep networks.",
+            "AdamW optimizer tracks running estimates of gradient moments."
+          ]
+        },
+        quiz: [
+          {
+            q: "What mathematical rule makes backpropagation computationally efficient?",
+            options: ["Calculus Chain Rule combined with dynamic programming", "Pythagorean theorem", "Random trial and error permutation", "Binary search tree"],
+            correct: 0,
+            exp: "The chain rule allows reuse of intermediate layer outputs, turning exponential computation into linear time O(edges).",
+            misc: "Backprop is not random guessing; it calculates exact analytical gradients via calculus."
+          }
+        ],
+        flashcards: [
+          { q: "What does the Learning Rate (η) control?", a: "The step size taken in the direction of the negative gradient during weight update" },
+          { q: "Why is ReLU preferred over Sigmoid in deep hidden layers?", a: "Its derivative is 1 for positive inputs, eliminating vanishing gradients" }
+        ]
+      },
+
+      "supply and demand": {
+        topic: "Supply and Demand",
+        Beginner: {
+          explanation: [
+            "Supply is how much is available for sale. Demand is how badly people want to buy it.",
+            "When something is rare and in high demand, prices rise. When there is an excess surplus nobody wants, prices fall."
+          ],
+          analogy: "Imagine cold water on a hot beach: 1 seller means $10 a bottle; 50 sellers means competition drives prices down to $1.",
+          takeaways: [
+            "High Demand + Low Supply = Higher Prices.",
+            "Low Demand + High Supply = Lower Prices.",
+            "Equilibrium is the price where buyers and sellers agree."
+          ]
+        },
+        Intermediate: {
+          explanation: [
+            "The Law of Demand states quantity demanded increases as price falls. Market equilibrium occurs at the intersection (P*, Q*).",
+            "Price ceilings cause shortages; price floors create surpluses."
+          ],
+          analogy: "Like a pair of scissors: both supply and demand blades must act together to negotiate market price.",
+          takeaways: [
+            "Equilibrium balances quantity supplied and quantity demanded.",
+            "Price elasticity measures sensitivity to price changes.",
+            "Shortages occur when Price is set below equilibrium."
+          ]
+        },
+        Advanced: {
+          explanation: [
+            "Marshallian partial equilibrium maximizes total social welfare (Consumer Surplus + Producer Surplus) under perfect competition.",
+            "Deadweight loss arises from price ceilings, taxes, or monopolies."
+          ],
+          analogy: "A continuous decentralized price information signal coordinating millions of independent agents without central planning.",
+          takeaways: [
+            "Consumer Surplus = Integral of inverse demand curve above market price.",
+            "Deadweight loss arises from price controls, taxes, or monopolies.",
+            "Allocative efficiency occurs where Marginal Benefit equals Marginal Cost."
+          ]
+        },
+        quiz: [
+          {
+            q: "What occurs in a competitive market when price is set below equilibrium?",
+            options: ["A shortage because demand exceeds supply", "A surplus", "Prices become negative", "Trade stops"],
+            correct: 0,
+            exp: "When price is too low, buyers want more than sellers are willing to provide, causing excess demand (shortage).",
+            misc: "Low prices cause shortages, not surpluses."
+          }
+        ],
+        flashcards: [
+          { q: "What is Market Equilibrium?", a: "The price point where Quantity Demanded equals Quantity Supplied" },
+          { q: "What is Deadweight Loss?", a: "The loss of total economic surplus caused by market inefficiencies or taxes" }
+        ]
+      }
+    };
+
+    let curTopic = "photosynthesis";
+    let curLevel = "Beginner";
+    let quizScore = 0;
+    let quizAnswered = 0;
+    let isSpeaking = false;
+
+    function normalizeTopic(t) {
+      const s = (t || "").toLowerCase();
+      if (s.includes("photo")) return "photosynthesis";
+      if (s.includes("quantum") || s.includes("superposition")) return "quantum superposition";
+      if (s.includes("neural") || s.includes("backprop")) return "neural backpropagation";
+      if (s.includes("supply") || s.includes("demand") || s.includes("econ")) return "supply and demand";
+      return "photosynthesis";
+    }
+
+    function renderApp() {
+      const data = DB[curTopic] || DB["photosynthesis"];
+      const levelData = data[curLevel] || data["Beginner"];
+
+      document.getElementById("activeLevelLabel").textContent = `Current: ${curLevel}`;
+      document.getElementById("lessonHeading").textContent = `${data.topic} — ${curLevel} Explanation`;
+
+      // Explanation
+      const expBody = document.getElementById("explanationBody");
+      expBody.innerHTML = "";
+      levelData.explanation.forEach(p => {
+        const pEl = document.createElement("p");
+        pEl.textContent = p;
+        expBody.appendChild(pEl);
+      });
+
+      // Analogy
+      document.getElementById("analogyBody").textContent = levelData.analogy;
+
+      // Takeaways
+      const takeawaysList = document.getElementById("takeawaysList");
+      takeawaysList.innerHTML = "";
+      levelData.takeaways.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "takeaway-item";
+        div.textContent = item;
+        takeawaysList.appendChild(div);
+      });
+
+      // Quiz
+      renderQuiz(data.quiz || []);
+
+      // Flashcards
+      renderFlashcards(data.flashcards || []);
+    }
+
+    function renderQuiz(questions) {
+      const container = document.getElementById("quizQuestionsContainer");
+      container.innerHTML = "";
+      quizScore = 0;
+      quizAnswered = 0;
+      document.getElementById("quizScoreText").textContent = `Score: 0 / ${questions.length}`;
+
+      questions.forEach((q, qIdx) => {
+        const box = document.createElement("div");
+        box.className = "quiz-question-box";
+        box.innerHTML = `
+          <div class="question-title">
+            <span style="color:#c084fc; font-weight:800;">Q${qIdx + 1}.</span> ${q.q}
+          </div>
+          <div class="options-grid">
+            ${q.options.map((opt, optIdx) => `
+              <button class="quiz-btn" data-q="${qIdx}" data-opt="${optIdx}">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div class="quiz-feedback"></div>
+        `;
+        container.appendChild(box);
+      });
+
+      container.querySelectorAll(".quiz-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const qIdx = parseInt(btn.dataset.q);
+          const optIdx = parseInt(btn.dataset.opt);
+          const qData = questions[qIdx];
+          const parent = btn.closest(".quiz-question-box");
+          const allBtns = parent.querySelectorAll(".quiz-btn");
+          const feedback = parent.querySelector(".quiz-feedback");
+
+          if (btn.disabled) return;
+          allBtns.forEach(b => b.disabled = true);
+          quizAnswered++;
+
+          const isCorrect = (optIdx === qData.correct);
+          if (isCorrect) {
+            quizScore++;
+            btn.classList.add("correct");
+            feedback.style.display = "block";
+            feedback.style.background = "rgba(6, 95, 70, 0.4)";
+            feedback.style.border = "1px solid #10b981";
+            feedback.style.color = "#6ee7b7";
+            feedback.innerHTML = `<strong>🎉 Correct!</strong> ${qData.exp}`;
+          } else {
+            btn.classList.add("wrong");
+            const correctBtn = allBtns[qData.correct];
+            if (correctBtn) correctBtn.classList.add("correct");
+            feedback.style.display = "block";
+            feedback.style.background = "rgba(159, 18, 57, 0.4)";
+            feedback.style.border = "1px solid #f43f5e";
+            feedback.style.color = "#fca5a5";
+            feedback.innerHTML = `<div><strong>❌ Diagnostic:</strong> ${qData.misc || ""}</div><div style="margin-top:4px; color:#e2e8f0;"><strong>Why:</strong> ${qData.exp}</div>`;
+          }
+
+          document.getElementById("quizScoreText").textContent = `Score: ${quizScore} / ${questions.length}`;
+        });
+      });
+    }
+
+    function renderFlashcards(cards) {
+      const grid = document.getElementById("flashcardsGrid");
+      grid.innerHTML = "";
+
+      cards.forEach((c, idx) => {
+        const box = document.createElement("div");
+        box.className = "fc-box";
+        box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="fc-tag">Card ${idx + 1}</span>
+            <span class="fc-tag" style="color:#94a3b8;">Question</span>
+          </div>
+          <div class="fc-content">${c.q}</div>
+          <div class="fc-hint">👁️ Click to Reveal Answer</div>
+        `;
+
+        let isFlipped = false;
+        box.addEventListener("click", () => {
+          isFlipped = !isFlipped;
+          if (isFlipped) {
+            box.classList.add("flipped");
+            box.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="fc-tag" style="color:#34d399;">✓ Answer</span>
+                <span class="fc-tag" style="color:#34d399;">Verified</span>
+              </div>
+              <div class="fc-content" style="color:#d8b4fe; font-size:12.5px;">${c.a}</div>
+              <div class="fc-hint" style="color:#cbd5e1;">↻ Click to flip back</div>
+            `;
+          } else {
+            box.classList.remove("flipped");
+            box.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="fc-tag">Card ${idx + 1}</span>
+                <span class="fc-tag" style="color:#94a3b8;">Question</span>
+              </div>
+              <div class="fc-content">${c.q}</div>
+              <div class="fc-hint">👁️ Click to Reveal Answer</div>
+            `;
+          }
+        });
+
+        grid.appendChild(box);
+      });
+    }
+
+    // Level selector
+    document.querySelectorAll(".level-card").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".level-card").forEach(c => {
+          c.classList.remove("active");
+          const foot = c.querySelector(".level-foot");
+          if (foot) foot.innerHTML = "<span>Click to Select</span><span>○</span>";
+        });
+        card.classList.add("active");
+        const foot = card.querySelector(".level-foot");
+        if (foot) foot.innerHTML = "<span>● Selected Active</span><span>✓</span>";
+        curLevel = card.dataset.level;
+        renderApp();
+      });
+    });
+
+    // Preset chips
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const top = chip.dataset.top;
+        document.getElementById("topicInput").value = top;
+        curTopic = normalizeTopic(top);
+        renderApp();
+      });
+    });
+
+    // Explain button
+    document.getElementById("learnBtn").addEventListener("click", () => {
+      const val = document.getElementById("topicInput").value.trim();
+      if (val) {
+        curTopic = normalizeTopic(val);
+        renderApp();
+      }
+    });
+
+    // Copy text
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      const text = document.getElementById("explanationBody").innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copyBtn");
+        btn.textContent = "✓ Copied!";
+        setTimeout(() => { btn.textContent = "📋 Copy"; }, 1800);
+      });
+    });
+
+    // TTS Voice Readout
+    function toggleTTS() {
+      if (!('speechSynthesis' in window)) {
+        alert("Text-to-Speech is not supported in this browser.");
+        return;
+      }
+      const btn = document.getElementById("ttsButton");
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        btn.textContent = "🔊 Read Aloud";
+        return;
+      }
+      const text = document.getElementById("explanationBody").innerText;
+      const analogy = document.getElementById("analogyBody").innerText;
+      const utterance = new SpeechSynthesisUtterance(`${text}. Here is an analogy: ${analogy}`);
+      utterance.onend = () => {
+        isSpeaking = false;
+        btn.textContent = "🔊 Read Aloud";
+      };
+      window.speechSynthesis.speak(utterance);
+      isSpeaking = true;
+      btn.textContent = "⏹️ Stop Audio";
+    }
+    document.getElementById("ttsButton").addEventListener("click", toggleTTS);
+
+    // Initial load
+    renderApp();
+  </script>
+</body>
+</html>
